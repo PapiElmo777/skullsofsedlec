@@ -4,6 +4,8 @@ import '../lib/tablero.dart';
 import '../lib/puntajes.dart';
 import '../lib/puntajesVillanos.dart';
 import '../lib/puntajesEnamorados.dart';
+import '../lib/puntajesCampesinos.dart';
+import '../lib/puntajesVerdugo.dart';
 
 void main() {
     test('Rey con Campesino en nivel inferior de su carta: 1 punto', () {
@@ -273,4 +275,257 @@ void main() {
       
       expect(puntos, equals(18));
     });
+  //campesinos
+    test('puntua 3 campesinos arriba del rey', () {
+      final tablero = Tablero.desde([
+        ['C', '.'],
+        ['C', 'C'],
+        ['C', 'R', '.'],
+        ['R', '.', '.'],
+        ['.', 'R', '.', '.'],
+        ['.', '.', '.', '.'],
+      ]);
+
+      final puntajes = PuntajesCampesinos(tablero);
+      final puntos = puntajes.calcularPuntajeTotal();
+      
+      print(tablero);
+      print('Total de puntos: $puntos');
+      
+      expect(puntos, equals(6));
+    });
+    test('puntua 4 campesinos sin rey', () {
+      final tablero = Tablero.desde([
+        ['C', '.'],
+        ['C', 'C'],
+        ['C', 'E', '.'],
+        ['.', '.', '.'],
+        ['.', '.', '.', '.'],
+        ['R', '.', '.', '.'],
+      ]);
+
+      final puntajes = PuntajesCampesinos(tablero);
+      final puntos = puntajes.calcularPuntajeTotal();
+      
+      print(tablero);
+      print('Total de puntos: $puntos');
+      
+      expect(puntos, equals(8));
+    });
+
+    //Mata reyes
+
+  test('villanos matan a rey: 0 Puntos', () {
+      final tablero = Tablero.desde([
+        ['V', '.'],
+        ['R', '.'],
+        ['.', 'V', '.'],
+        ['.', '.', '.'],
+        ['C', 'C', 'C', 'C'],
+        ['.', '.', '.', '.'],
+      ]);
+
+      final puntajes = Puntajes(tablero);
+      final puntos = puntajes.calcularPuntajeTotal();
+      
+      print('Tablero Rey Corrupto (Vertical/Diagonal):');
+      print(tablero);
+      print('Total de puntos: $puntos');
+      
+      expect(puntos, equals(0));
+    });
+
+  test('Rey puntua porque no hay villanos suficientes: 3', () {
+      final tablero = Tablero.desde([
+        ['R', 'V'],
+        ['C', '.'],
+        ['R', 'C', 'V'],
+        ['.', '.', '.'],
+        ['.', '.', '.', '.'],
+        ['.', '.', '.', '.'],
+      ]);
+
+      final puntajes = Puntajes(tablero);
+      final puntos = puntajes.calcularPuntajeTotal();
+      print(tablero);
+      print('Total de puntos: $puntos');
+      
+      expect(puntos, equals(3));
+    });
+
+    test('campecinos puntuan', () {
+      final tablero = Tablero.desde([
+        ['V', '.'],
+        ['R', '.'],
+        ['V', 'V', '.'],
+        ['R', 'V', '.'],
+        ['C', 'C', 'C', 'C'],
+        ['.', 'C', 'C', '.'],
+      ]);
+      final puntajes = PuntajesCampesinos(tablero); 
+      final puntos = puntajes.calcularPuntajeTotal();
+      
+      print('Tablero Rey Eliminado (Campesinos libres):');
+      print(tablero);
+      print('Total de puntos: $puntos');
+      
+      expect(puntos, equals(6));
+    });
+
+    test('campecinos puntuan', () {
+      final tablero = Tablero.desde([
+        ['S', 'V'],
+        ['S', 'C'],
+        ['V', 'R', 'C'],
+        ['C', 'V', 'E'],
+        ['C', 'C', 'R', 'S'],
+        ['V', 'S', 'S', 'E'],
+      ]);
+      final puntajes = PuntajesCampesinos(tablero); 
+      final puntos = puntajes.calcularPuntajeTotal();
+      
+      print('Tablero Rey Eliminado (Campesinos libres):');
+      print(tablero);
+      print('Total de puntos: $puntos');
+      
+      expect(puntos, equals(6));
+    });
+
+    // Verdugos
+    test('Varios verdugos)', () {
+      final tablero = Tablero.desde([
+        ['.', '.'],
+        ['B', 'V'], //1
+        ['.', 'B', '.'],//4
+        ['V', 'V', 'V'],
+        ['B', '.', '.', '.'],
+        ['.', '.', '.', 'V'],
+      ]);
+
+      final puntajes = PuntajesVerdugo(tablero);
+      final puntos = puntajes.calcularPuntajeTotal();
+      
+      print('Tablero Verdugo Cadena Rota:');
+      print(tablero);
+      print('Total de puntos: $puntos');
+      
+      expect(puntos, equals(8));
+    });
+    test('Varios verdugos)', () {
+      final tablero = Tablero.desde([
+        ['.', '.'],
+        ['.', 'V'], //1
+        ['.', 'B', '.'],//4
+        ['V', 'V', 'V'],
+        ['B', '.', '.', '.'],
+        ['.', '.', '.', 'V'],
+      ]);
+
+      final puntajes = PuntajesVerdugo(tablero);
+      final puntos = puntajes.calcularPuntajeTotal();
+      
+      print('Tablero Verdugo Cadena Rota:');
+      print(tablero);
+      print('Total de puntos: $puntos');
+      
+      expect(puntos, equals(7));
+    });
+
+    test('EJEMPLO 1)', () {
+      final tablero = Tablero.desde([
+        ['.', '.'],
+        ['B', '.'], //1
+        ['V', '.', '.'],//4
+        ['V', '.', '.'],
+        ['.', 'V', '.', '.'],
+        ['.', '.', '.', '.'],
+      ]);
+
+      final puntajes = PuntajesVerdugo(tablero);
+      final puntos = puntajes.calcularPuntajeTotal();
+      
+      print('Tablero Verdugo Cadena Rota:');
+      print(tablero);
+      print('Total de puntos: $puntos');
+      
+      expect(puntos, equals(3));// ESTA BIEN 
+    });
+    test('EJEMPLO 2)', () {
+      final tablero = Tablero.desde([
+        ['.', '.'],
+        ['B', 'V'], //1
+        ['V', '.', 'V'],//4
+        ['V', '.', '.'],
+        ['.', 'V', '.', '.'],
+        ['.', '.', '.', '.'],
+      ]);
+
+      final puntajes = PuntajesVerdugo(tablero);
+      final puntos = puntajes.calcularPuntajeTotal();
+      
+      print('Tablero Verdugo Cadena Rota:');
+      print(tablero);
+      print('Total de puntos: $puntos');
+      
+      expect(puntos, equals(5));//4
+    });
+    test('EJEMPLO 3)', () {
+      final tablero = Tablero.desde([
+        ['.', '.'],
+        ['B', 'V'], //1
+        ['V', 'B', 'V'],//4
+        ['V', '.', '.'],
+        ['.', 'V', '.', '.'],
+        ['.', '.', '.', '.'],
+      ]);
+
+      final puntajes = PuntajesVerdugo(tablero);
+      final puntos = puntajes.calcularPuntajeTotal();
+      
+      print('Tablero Verdugo Cadena Rota:');
+      print(tablero);
+      print('Total de puntos: $puntos');
+      
+      expect(puntos, equals(10));
+    });
+    test('EJEMPLO 4)', () {
+      final tablero = Tablero.desde([
+        ['.', '.'],
+        ['B', 'V'], //1
+        ['V', 'B', 'V'],//4
+        ['V', '.', '.'],
+        ['.', 'V', '.', '.'],
+        ['.', '.', 'V', '.'],
+      ]);
+
+      final puntajes = PuntajesVerdugo(tablero);
+      final puntos = puntajes.calcularPuntajeTotal();
+      
+      print('Tablero Verdugo Cadena Rota:');
+      print(tablero);
+      print('Total de puntos: $puntos');
+      
+      expect(puntos, equals(10));
+    });
+    test('EJEMPLO 5)', () {
+      final tablero = Tablero.desde([
+        ['.', '.'],
+        ['B', 'V'], //1
+        ['V', 'B', 'V'],//4
+        ['V', '.', '.'],
+        ['.', 'V', '.', '.'],
+        ['B', '.', 'V', '.'],
+      ]);
+
+      final puntajes = PuntajesVerdugo(tablero);
+      final puntos = puntajes.calcularPuntajeTotal();
+      
+      print('Tablero Verdugo Cadena Rota:');
+      print(tablero);
+      print('Total de puntos: $puntos');
+      
+      expect(puntos, equals(10));
+    });
+
+
 }

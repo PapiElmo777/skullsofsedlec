@@ -3,7 +3,8 @@ enum Calaca {
   campesino,
   Sacerdote,
   Villano,
-  enamorado;
+  enamorado,
+  verdugo;
 
 
   String get simbolo {
@@ -18,6 +19,8 @@ enum Calaca {
         return 'V';
       case Calaca.enamorado:
         return 'E';
+      case Calaca.verdugo:
+        return 'B';
     }
   }
   static Calaca? deSimbolo(String simbolo) {
@@ -32,6 +35,8 @@ enum Calaca {
         return Calaca.Villano;
       case 'E':
         return Calaca.enamorado;
+      case 'B':
+        return Calaca.verdugo;
       default:
         return null;
     }

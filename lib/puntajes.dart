@@ -10,12 +10,14 @@ class Puntajes {
     if (nivel <= 4) return 2;
     return 3;
   }
+
   int? _obtenerNivelInferiorDeCarta(int nivel) {
     if (nivel % 2 == 1) {
       return nivel + 1;
     }
     return null;
   }
+
   int _contarEnParDeNiveles(int nivelSuperior) {
     int contador = 0;
     final nivelInferior = nivelSuperior + 1;
@@ -33,26 +35,56 @@ class Puntajes {
         contador++;
       }
     }
-    
     return contador;
   }
+
   int _contarEnNivel(int nivel) {
     int contador = 0;
     final tamano = tablero.tamanoNivel(nivel);
-    
     for (int pos = 0; pos < tamano; pos++) {
       final calaca = tablero.obtener(nivel, pos);
       if (calaca == Calaca.rey || calaca == Calaca.campesino) {
         contador++;
       }
     }
-    
     return contador;
   }
+
+  
+  bool _esVillano(int n, int i) {
+    return tablero.obtener(n, i) == Calaca.Villano;
+  }
+
+  int _contarVillanosAdyacentes(int n, int i) {
+    int villanos = 0;
+    if (_esVillano(n, i - 1)) villanos++;
+    if (_esVillano(n, i + 1)) villanos++;
+    if (n > 1) {
+      if (n == 2 || n == 4 || n == 6) {
+        if (_esVillano(n - 1, i)) villanos++;
+      } else {
+        if (_esVillano(n - 1, i)) villanos++;
+        if (_esVillano(n - 1, i - 1)) villanos++;
+      }
+    }
+    if (n < 6) {
+      if (n == 1 || n == 3 || n == 5) {
+        if (_esVillano(n + 1, i)) villanos++;
+      } else {
+        if (_esVillano(n + 1, i)) villanos++;
+        if (_esVillano(n + 1, i + 1)) villanos++;
+      }
+    }
+
+    return villanos;
+  }
+
   int calcularPuntosDeRey(int nivel, int posicion) {
     final calaca = tablero.obtener(nivel, posicion);
     if (calaca != Calaca.rey) return 0;
-    
+    if (_contarVillanosAdyacentes(nivel, posicion) >= 2) {
+      return 0;
+    }
     int puntos = 0;
     final parActual = _obtenerPar(nivel);
     final nivelInferior = _obtenerNivelInferiorDeCarta(nivel);
@@ -68,6 +100,7 @@ class Puntajes {
     
     return puntos;
   }
+
   int calcularPuntajeTotal() {
     int puntajeTotal = 0;
 
@@ -84,23 +117,22 @@ class Puntajes {
     return puntajeTotal;
   }
 
+  // (Opcional) Actualizar reporte si lo usas
   Map<String, dynamic> obtenerReporteDetallado() {
     final detalleReyes = <Map<String, dynamic>>[];
     int puntajeTotal = 0;
 
     for (int nivel = 1; nivel <= 6; nivel++) {
       final tamano = tablero.tamanoNivel(nivel);
-      
       for (int posicion = 0; posicion < tamano; posicion++) {
-        final calaca = tablero.obtener(nivel, posicion);
-        
-        if (calaca == Calaca.rey) {
+        if (tablero.obtener(nivel, posicion) == Calaca.rey) {
           final puntos = calcularPuntosDeRey(nivel, posicion);
           puntajeTotal += puntos;
           
           detalleReyes.add({
             'ubicacion': 'N$nivel[$posicion]',
             'puntos': puntos,
+            'corrupto': puntos == 0 && _contarVillanosAdyacentes(nivel, posicion) >= 2
           });
         }
       }
